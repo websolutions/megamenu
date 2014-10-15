@@ -8,7 +8,7 @@
   "description": "Multi-level menu system displaying sub-levels on hover.",
   "main": [
     "js/wsol.megaMenu.js",
-    "js/wsol.megaMenu.css"
+    "css/wsol.megaMenu.css"
   ],
   "ignore": [
     "bower_components"

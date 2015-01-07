@@ -61,20 +61,21 @@ The most basic example follows this DOM structure:
 
 And is initialized like so:
 ``` javascript
-$(".megamenu").megamenu();
+$(".megamenu").wsol_megamenu();
 ```
 
 Menus can be destroyed at any time:
 ``` javascript
-$(".megamenu").unmegaMenu();
+$(".megamenu").data("wsol.megamenu").destroy();
 ```
 
 ### Configuring
 
-In addition to HoverIntent's [options](https://github.com/briancherne/jquery-hoverIntent/blob/master/jquery.hoverIntent.js), the plugin can be configured as such:
+The plugin can be configured as such:
 
 Option                      | Type     | Description                                                          | Default
 ----------------------------|----------|----------------------------------------------------------------------|--------
+`hoverIntent`               | Object   | Configuration for the underlying hoverIntent plugin                  | `{}`
 `itemSelector`              | String   | Selector for top-level menu items                                    | `> li`
 `subMenuSelector`           | String   | Selector for submenus                                                | `.dropdown`
 `subMenuItemSelector`       | String   | Selector for submenu items                                           | `.dropdown-menu > li`
@@ -82,3 +83,5 @@ Option                      | Type     | Description                            
 `subSubMenuColSelector`     | String   | Selector for sub-submenu columns                                     | `.dropdown-panel-menu`
 `hoverClass`                | String   | Class name to apply to hovered menu items                            | `hover`
 `revClass`                  | String   | Class name to apply reversely-positioned (sub-)submenus              | `rev`
+`over`                      | Function | Callback for top-level mouseOver events                              |
+`out`                       | Function | Callback for top-level mouseOut events                               |

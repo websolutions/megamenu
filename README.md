@@ -61,12 +61,12 @@ The most basic example follows this DOM structure:
 
 And is initialized like so:
 ``` javascript
-$(".megamenu").wsol_megamenu();
+$(".js-megamenu").wsol_megamenu();
 ```
 
 Menus can be destroyed at any time:
 ``` javascript
-$(".megamenu").data("wsol.megamenu").destroy();
+$(".js-megamenu").data("wsol.megamenu").destroy();
 ```
 
 ### Configuring

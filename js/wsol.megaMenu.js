@@ -22,12 +22,12 @@
       base.$items = base.$el.find(base.options.itemSelector);
 
       // Handle events
-      base.$items.hoverIntent($.extend({}, base.options.hoverIntent, {
+      base.$items.hoverIntent($.extend({}, base.options, {
         over: base.overHandler,
         out: base.outHandler
       }));
       base.$items.find(base.options.subMenuSelector).find(base.options.subMenuItemSelector)
-          .hoverIntent($.extend({}, base.options.hoverIntent, {
+          .hoverIntent($.extend({}, base.options, {
         over: function(event) { $(this).addClass(base.options.hoverClass); },
         out: function(event) { $(this).removeClass(base.options.hoverClass); }
       }));
@@ -112,20 +112,21 @@
   };
 
   $.wsol.megamenu.defaultOptions = {
-    hoverIntent: {
-      sensitivity: 2,
-      interval: 10,
-      timeout: 50
-    },
+    // HoverIntent config
+    sensitivity: 2,
+    interval: 10,
+    timeout: 50,
+    over: null,
+    out: null,
+
+    // Custom config
     itemSelector: "> li",
     subMenuSelector: ".dropdown",
     subMenuItemSelector: ".dropdown-menu > li",
     subSubMenuSelector: ".dropdown-panel",
     subSubMenuColSelector: ".dropdown-panel-menu",
     hoverClass: "hover",
-    revClass: "rev",
-    over: null,
-    out: null
+    revClass: "rev"
   };
 
   $.fn.wsol_megamenu = function(options) {

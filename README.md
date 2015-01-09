@@ -71,11 +71,10 @@ $(".megamenu").data("wsol.megamenu").destroy();
 
 ### Configuring
 
-The plugin can be configured as such:
+In addition to [HoverIntent's options](https://github.com/briancherne/jquery-hoverIntent), the plugin can be configured as such:
 
 Option                      | Type     | Description                                                          | Default
 ----------------------------|----------|----------------------------------------------------------------------|--------
-`hoverIntent`               | Object   | Configuration for the underlying hoverIntent plugin                  | `{}`
 `itemSelector`              | String   | Selector for top-level menu items                                    | `> li`
 `subMenuSelector`           | String   | Selector for submenus                                                | `.dropdown`
 `subMenuItemSelector`       | String   | Selector for submenu items                                           | `.dropdown-menu > li`
@@ -83,5 +82,3 @@ Option                      | Type     | Description                            
 `subSubMenuColSelector`     | String   | Selector for sub-submenu columns                                     | `.dropdown-panel-menu`
 `hoverClass`                | String   | Class name to apply to hovered menu items                            | `hover`
 `revClass`                  | String   | Class name to apply reversely-positioned (sub-)submenus              | `rev`
-`over`                      | Function | Callback for top-level mouseOver events                              |
-`out`                       | Function | Callback for top-level mouseOut events                               |

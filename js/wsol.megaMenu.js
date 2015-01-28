@@ -83,7 +83,7 @@
     base.overHandler = function() {
       var $target = $(this).closest(base.$items), $sub = $target.find(base.options.subMenuSelector),
           rowWidth = $sub.outerWidth(true),
-          navWidth = base.$el.width();
+          navWidth = base.$el.closest('.inner').width();
 
       // If the sub-menu will extend beyond the menu, right align it
       var subRightAlign = ( navWidth - rowWidth ) < $target.position().left;

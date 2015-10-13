@@ -21,69 +21,22 @@
 
       base.$items = base.$el.find(base.options.itemSelector);
 
-      // Handle interaction on top level items
-      base.$items
-        .on( 'mouseenter touchstart', base.overHandler )
-        .on( 'mouseleave', function( evt ) {
-          $(this).removeClass(base.options.hoverClass).blur();
-        } );
-
-      // Handle interaction on submenus
-      base.$items
-        .find( base.options.subMenuSelector )
-        .find( base.options.subMenuItemSelector )
-          .on('mouseenter', function ( evt ) {
-            evt.stopImmediatePropagation();
-            $(this).addClass(base.options.hoverClass);
-          } )
-          .on('mouseleave', function () {
-            $(this).removeClass( base.options.hoverClass ).blur();
-          })
-          .on('touchstart', function ( evt ) {
-            evt.stopImmediatePropagation();
-            if ( $(this).hasClass( base.options.hoverClass )) {
-              $(this).addClass( base.options.hoverClass );
-            } else {
-              $(this).removeClass( base.options.hoverClass ).blur();
-            }
-          } );
-
-      // Add something to click/tap to expand responsive sub-menus/panels
-      base.$items
-        .find( base.options.subMenuSelector )
-        .siblings('a')
-        .wrap('<span class="expandable"></span>')
-        .before('<span class="expand"><span class="plus">+</span><span class="minus">&ndash;</span></span>');
-
-      base.$items
-        .find( base.options.subSubMenuSelector )
-        .siblings('a')
-        .wrap('<span class="flyout-expandable"></span>')
-        .before('<span class="flyout-expand"><span class="plus">+</span><span class="minus">&ndash;</span></span>')
-        .parents( base.options.subMenuSelector ).addClass('has-flyout');
-
-      // Handle click/tap on newly added +/-
-      base.$items.find( ".expand" ).on( 'click' , function( evt ) {
-        evt.stopPropagation();
-        $(this).closest('li')
-          .toggleClass( base.options.hoverTouchClass )
-          .siblings()
-            .removeClass( base.options.hoverTouchClass );
-      } );
-
-      base.$items.find( ".flyout-expand" ).on( 'click' , function( evt ) {
-        evt.stopPropagation();
-        $(this).closest('li')
-          .toggleClass( base.options.hoverTouchClass )
-          .siblings()
-            .removeClass( base.options.hoverTouchClass );
-      } );
+      // Handle events
+      base.$items.hoverIntent($.extend({}, base.options, {
+        over: base.overHandler,
+        out: base.outHandler
+      }));
+      base.$items.find(base.options.subMenuSelector).find(base.options.subMenuItemSelector)
+          .hoverIntent($.extend({}, base.options, {
+        over: function(event) { $(this).addClass(base.options.hoverClass); },
+        out: function(event) { $(this).removeClass(base.options.hoverClass); }
+      }));
     };
 
     base.overHandler = function() {
       var $target = $(this).closest(base.$items), $sub = $target.find(base.options.subMenuSelector),
-          rowWidth = $sub.outerWidth(true),
-          navWidth = base.$el.closest('.inner').width();
+          rowWidth = $sub.outerWidth(false),
+          navWidth = base.$el.width();
 
       // If the sub-menu will extend beyond the menu, right align it
       var subRightAlign = ( navWidth - rowWidth ) < $target.position().left;
@@ -93,31 +46,28 @@
 
       $target.addClass(base.options.hoverClass); // Add class after positioning to avoid jumping
 
+      var height = $sub.css('min-height', 0).height();
       $sub.find(base.options.subSubMenuColSelector).closest(base.options.subSubMenuSelector).each(function () {  // for each row...
-        var $subSub = $(this), colWidth = 0;
+        var $subSub = $(this), subSubWidth = 0;
 
         $subSub.find(base.options.subSubMenuColSelector).each(function () { // For each column...
-          colWidth += $(this).outerWidth(true); // Add each column's width together
+          subSubWidth += $(this).outerWidth(false); // Add each column's width together
         });
 
         // If the panel will extend beyond the menu, right align it
-        var subsubRightAlign = ( $sub.position().left + $sub.width() + colWidth ) > navWidth;
-        var border = parseInt( $sub.css('borderLeftWidth') ) + parseInt( $sub.css('borderRightWidth') );
+        var subsubRightAlign = ( $sub.position().left + $sub.outerWidth(false) + subSubWidth ) > navWidth;
+        var border = parseInt( $sub.css('border-left-width') ) + parseInt( $sub.css('border-right-width') );
         $subSub.css({
-          'width': colWidth,
-          'left': subsubRightAlign ? 'auto' : ( rowWidth - border ) + 'px',
-          'right': subsubRightAlign ? ( rowWidth - border ) + 'px' : 'auto'
+          'width': Math.round(subSubWidth) + 2, // just in case
+          'left': subsubRightAlign ? 'auto' : Math.round(rowWidth - border),
+          'right': subsubRightAlign ? Math.round(rowWidth - border) : 'auto'
         }).toggleClass(base.options.revClass, subsubRightAlign);
 
-        var subSubHeight = $subSub.height();
-        var subHeight = $sub.height();
+        $sub.add($subSub).css('height', 'auto');
 
-        // If the panel is shorter than the submenu, make them the same height
-        if (subSubHeight < subHeight) {
-          $subSub.css({ 'height': subHeight });
-        }
-
-      });
+        height = Math.max(height, $subSub.css('min-height', 0).height());
+      }).css('min-height', height);
+      $sub.css('min-height', height);
 
       if (base.options.over) {
         base.options.over.call(event.target, event, _);
@@ -132,15 +82,10 @@
       if (base.options.out) {
         base.options.out.call(event.target, event, _);
       }
-    };
+    }
 
     base.destroy = function() {
-      console.log(base);
-      base.$items.removeClass( base.options.hoverClass ).removeClass( base.options.hoverTouchClass );
-      base.$items.find( '.expand' ).remove();
-      base.$items.find( '.expandable' ).children().unwrap();
-      base.$items.find( '.flyout-expand' ).remove();
-      base.$items.find( '.flyout-expandable' ).children().unwrap();
+      base.$items.removeClass(base.options.hoverClass);
 
       // Loop through submenus
       base.$items.find(base.options.subMenuSelector).each(function () {
@@ -152,7 +97,8 @@
           'width': '',
           'left': '',
           'right': '',
-          'height': ''
+          'height': '',
+          'min-height': 0
         });
       });
 
@@ -164,6 +110,13 @@
   };
 
   $.wsol.megamenu.defaultOptions = {
+    // HoverIntent config
+    sensitivity: 2,
+    interval: 10,
+    timeout: 50,
+    over: null,
+    out: null,
+
     // Custom config
     itemSelector: "> li",
     subMenuSelector: ".dropdown",
@@ -171,7 +124,6 @@
     subSubMenuSelector: ".dropdown-panel",
     subSubMenuColSelector: ".dropdown-panel-menu",
     hoverClass: "hover",
-    hoverTouchClass: "active",
     revClass: "rev"
   };
 

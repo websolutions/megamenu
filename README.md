@@ -1,3 +1,6 @@
+# DEPRICATED
+## Use https://github.com/vadikom/smartmenus instead.
+
 # MegaMenu
 
 Multi-level menu system displaying sub-levels on hover.
